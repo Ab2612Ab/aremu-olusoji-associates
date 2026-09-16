@@ -1,11 +1,31 @@
-const OLD_BRAND = 'Aremu Olusoji & Associates';
 const NEW_BRAND = 'Olusoji Aremu Associate';
+
+const BRAND_VARIANTS = [
+  'Aremu Olusoji & Associates',
+  'Aremu Olusoji & Associate',
+  'Aremu Olusoji Associates',
+  'Aremu Olusoji Associate',
+  'Aremu Olusoji and Associates',
+  'Aremu Olusoji and Associate',
+  'Olusoji Aremu & Associates',
+  'Olusoji Aremu & Associate',
+  'Olusoji Aremu Associates',
+  'Olusoji Aremu and Associates',
+  'Olusoji Aremu and Associate'
+];
+
+function replaceBrandValue(value) {
+  if (!value) return value;
+  let result = value;
+  for (const variant of BRAND_VARIANTS) {
+    result = result.split(variant).join(NEW_BRAND);
+  }
+  return result;
+}
 
 function replaceBrandText(node) {
   if (node.nodeType === Node.TEXT_NODE) {
-    if (node.nodeValue && node.nodeValue.includes(OLD_BRAND)) {
-      node.nodeValue = node.nodeValue.split(OLD_BRAND).join(NEW_BRAND);
-    }
+    node.nodeValue = replaceBrandValue(node.nodeValue);
     return;
   }
 
@@ -14,9 +34,8 @@ function replaceBrandText(node) {
   for (const attr of ['aria-label', 'title', 'content', 'href']) {
     if (node.hasAttribute(attr)) {
       const value = node.getAttribute(attr);
-      if (value && value.includes(OLD_BRAND)) {
-        node.setAttribute(attr, value.split(OLD_BRAND).join(NEW_BRAND));
-      }
+      const replaced = replaceBrandValue(value);
+      if (replaced !== value) node.setAttribute(attr, replaced);
     }
   }
 
@@ -24,8 +43,8 @@ function replaceBrandText(node) {
 }
 
 function applyBrand() {
-  replaceBrandText(document.body);
-  document.title = document.title.replaceAll(OLD_BRAND, NEW_BRAND);
+  replaceBrandText(document.documentElement);
+  document.title = replaceBrandValue(document.title);
 }
 
 if (document.readyState === 'loading') {
