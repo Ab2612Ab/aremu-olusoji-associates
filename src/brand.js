@@ -1,4 +1,5 @@
 const NEW_BRAND = 'Olusoji Aremu Associate';
+const WHATSAPP = 'https://wa.me/2347031280458';
 const BRAND_VARIANTS = [
   'Aremu Olusoji & Associates','Aremu Olusoji & Associate','Aremu Olusoji Associates','Aremu Olusoji Associate',
   'Aremu Olusoji and Associates','Aremu Olusoji and Associate','Olusoji Aremu & Associates','Olusoji Aremu & Associate',
@@ -29,6 +30,18 @@ function applyBrand() {
   if (!document.body) return;
   replaceText(document.body);
   document.title = replaceBrandValue(document.title);
+  const existing = document.querySelector('[data-whatsapp-contact]');
+  if (!existing) {
+    const link = document.createElement('a');
+    link.href = WHATSAPP;
+    link.target = '_blank';
+    link.rel = 'noreferrer';
+    link.className = 'whatsapp-contact';
+    link.dataset.whatsappContact = 'true';
+    link.setAttribute('aria-label', 'Contact me on WhatsApp');
+    link.textContent = 'Contact me';
+    document.body.appendChild(link);
+  }
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyBrand, { once: true });
 else applyBrand();
@@ -37,5 +50,6 @@ const observer = new MutationObserver((mutations) => {
     if (mutation.type === 'childList') for (const node of mutation.addedNodes) replaceText(node);
     else if (mutation.type === 'characterData') replaceText(mutation.target);
   }
+  if (!document.querySelector('[data-whatsapp-contact]')) applyBrand();
 });
 if (document.body) observer.observe(document.body, { subtree: true, childList: true, characterData: true });
